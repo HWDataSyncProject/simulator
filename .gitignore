@@ -1,0 +1,15 @@
+**/__pycache__/*
+.vscode/*
+# bake/*
+# netanim-*/
+ns-3.*/build/*
+# pybindgen-*.*.*/*
+# /.config
+# *.py
+
+
+# /*
+# !/README
+
+# # !/ns-3.*/
+# !/ns-3.*/scratch/*.cc

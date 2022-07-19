@@ -1,0 +1,146 @@
+/* Water Level Matrix Documentation */
+/* 水位矩阵文档 */
+
+This document describes the class WLMatrix, which is an implementation of the water level matrix.
+本文档说明关于水位矩阵的实现，类WLMatrix。
+
+1. Class name
+WLMatrix
+
+2. Function
+This class implements the establishment, storage and maintenance of the water level matrix.
+该类实现水位矩阵的建立、存储及维护。
+
+3. Member variables
+The member variables are used to store the data of the water level matrix and related information of various operations based on the water level matrix.
+成员变量用于存储水位矩阵的数据以及基于水位矩阵的各种操作的相关信息。
+
+Access property: private;
+
+(1) addr
+Variable declaration: Address addr[4];
+Function: Record the IP addresses of the peer nodes with which the associated node can communicate. The maximum number of IP addresses is 4, because in the experimental scenario, the total number of device nodes is 5, and a node can communicate with a maximum of 4 nodes.
+功能：记录关联节点可进行通信的对等节点的IP地址。IP地址的个数最多为4个，原因是在实验场景中设备节点个数总共为5个，某节点的可通信节点最多为4个。
+Data type：Defined data type "Address".
+数据类型：已定义的数据类型“Address”。
+
+(2) port
+Variable declaration: uint16_t port[4];
+Function: Record the ports of the applications that use the water level matrix in the nodes that can be communicated by the associated node. The maximum number is 4.
+功能：记录关联节点可通信节点中使用水位矩阵的应用的端口，个数最多为4个。
+
+(3) addr_count
+Variable declaration: uint32_t addr_count;
+Function: Record the number of communicable nodes, which is used as a stop sign for traversing the array "addr" when periodically pushing the water level matrix.
+功能：记录可通信节点个数，用于在定期推送水位矩阵时，作为遍历数组addr的停止标志。
+
+(4) is_initialized
+Variable declaration: bool is_initialized;
+Function: Flag indicating whether the associated node has initialized the water level matrix. When a device node joins the HyperTerminal for the first time, the water level matrix is initialized, "is_initialized" is set to "True", and it remains unchanged thereafter.
+功能：指示关联节点是否已初始化水位矩阵的标志。当设备节点第一次加入超级终端时，水位矩阵被初始化，“is_initialized”被置为“True”，此后保持不变。
+
+(5) device_count;
+Variable declaration: uint32_t device_count;
+Function: Record the number of terminal devices (water level information) stored in the water level matrix. Note that the number of devices may not be equal to the number of IP addresses, because the associated node may obtain the water level information of other nodes through neighboring nodes.
+功能：记录水位矩阵中存储的终端设备（的水位信息）的个数。注意，设备的个数可能不等于IP地址的个数，这是因为关联节点可能通过相邻节点获取了其他节点的水位信息。
+
+(6) node_number, app_number, data_type_number
+Variable declaration: 
+uint32_t node_number;
+uint32_t app_number;
+uint32_t data_type_number;
+Function: Member variables "node_number", "app_number" and "data_type_number" respectively record the number of nodes in the HyperTerminal, the total number of applications in all nodes, and the number of possible data types of applications. The water level matrix is constructed based on these three values.
+功能：成员变量“node_number”，“app_number”和“data_type_number”分别记录超级终端中的节点数量、所有节点中应用数量、应用可能的数据类型数量。水位矩阵基于这三个值构建。
+
+(7) node_id
+Variable declaration: uint32_t node_id;
+Function: Record the node ID of the associated node in the HyperTerminal.
+功能：记录关联节点在超级终端的节点ID。
+
+(8) WLM
+Variable declaration: int64_t ***WLM;
+Function: Record the water level matrix. The water level matrix is implemented as a three-dimensional array, and the three dimensions correspond to nodes, applications, and data types.
+功能：记录水位矩阵。水位矩阵实现为一个三维数组，三个维度对应于节点、应用、数据类型。
+
+(9) WLM_temp
+Variable declaration: int64_t ***WLM_temp;
+Function: Record water level matrix information, which is received periodically from other nodes for subsequent water level matrix updates.
+功能：记录定期地从其他节点接收的水位矩阵，用于后续的水位矩阵更新。
+
+4. Member functions
+The member functions realize the establishment of the water level matrix and various operations based on the water level matrix.
+成员函数实现水位矩阵的建立以及基于水位矩阵的各种操作。
+
+Access property: public;
+
+(1) WLMatrix, ~WLMatrix
+Function declaration:
+WLMatrix ();
+virtual ~WLMatrix ();
+WLMatrix (uint32_t n_num, uint32_t a_num, uint32_t dt_num);
+Function: The constructor and destructor of the class WLMatrix implement member variable value initialization, apply for storage space, and release storage space.
+功能：类WLMatrix的构造函数和析构函数，实现成员变量值初始化、申请存储空间、释放存储空间。
+
+(2) GetNodeID, SetNodeID
+Function declaration:
+uint32_t GetNodeID ();
+void SetNodeID (uint32_t n_id);
+Function: Get and set the associated node ID.
+功能：获取和设置关联节点ID。
+
+(3) GetWLMatrix
+Function declaration: int64_t GetWLMatrix (uint32_t n_idx, uint32_t a_idx, uint32_t dt_idx);
+Function: Get water level information for a specific node, specific application, and specific data type.
+功能：获取特定节点、特定应用、特定数据类型的水位信息。
+
+(4) UpdataWLMatrix
+Function declaration: void UpdataWLMatrix (uint32_t a_id, uint32_t dt_id, int64_t ts);
+Function: According to the generation of application data in the associated node, the water level information of this node is updated.
+功能：根据关联节点中应用数据的生成，更新本节点的水位信息。
+
+(5) SetWLMatrixTemp
+Function declaration: void SetWLMatrixTemp (uint32_t n_idx, uint32_t a_idx, uint32_t dt_idx, int64_t ts);
+Function: According to the water level matrix periodically pushed by the communicable peer nodes, the relevant water level information is temporarily stored.
+功能：根据可通信对等节点定期推送的水位矩阵，临时的存储相关水位信息。
+
+(6) CompareAndUpdateWLMatrix
+Function declaration: void CompareAndUpdateWLMatrix ();
+Function: Compare with the water level matrix pushed by other nodes, and update the local water level matrix.
+功能：与其他节点推送的水位矩阵进行对比，更新本地水位矩阵。
+
+(7) AddRemote
+Function declaration: void AddRemote (Address ip, uint16_t port_num);
+Function: Add communicating peers.
+功能：添加可通信的对等节点。
+
+(8) GetAddr, GetPort, GetAddrCount
+Function declaration: 
+Address GetAddr (uint32_t ip_idx);
+uint16_t GetPort (uint32_t port_idx);
+uint32_t GetAddrCount ();
+Function: Get the IP address and port of the specific communicable nodes, and total number of IP addresses, respectively.
+功能：分别获取特定可通信节点的IP地址、端口和可通信节点IP地址总个数。
+
+(9)  GetIsInitialized, SetIsInitialized
+Function declaration: 
+bool GetIsInitialized ();
+void SetIsInitialized ();
+Function: Get and set the initialization flag.
+功能：获取和设置初始化的标志。
+
+(10) GetDeviceCount, SetDeviceCount
+Function declaration: 
+uint32_t GetDeviceCount ();
+void SetDeviceCount (uint32_t d_c);
+Function: Get and set the number of recorded devices.
+功能：获取和设置已记录设备个数。
+
+(11) GetNodeNumber, GetAppNumber, GetDateTypeNumber
+Function declaration: 
+uint32_t GetNodeNumber ();
+uint32_t GetAppNumber ();
+uint32_t GetDateTypeNumber ();
+Function: Get the number of nodes, applications, and data types respectively.
+功能：分别获取节点数、应用数、数据类型数。
+
+
