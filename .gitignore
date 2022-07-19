@@ -3,7 +3,7 @@
 # bake/*
 # netanim-*/
 ns-3.*/build/*
-ns-3.*/.waf3-*
+ns-3.*/.waf3-*/*
 # pybindgen-*.*.*/*
 # /.config
 # *.py
