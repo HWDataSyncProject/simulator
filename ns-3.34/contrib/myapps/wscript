@@ -1,0 +1,49 @@
+# -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+# def options(opt):
+#     pass
+
+# def configure(conf):
+#     conf.check_nonfatal(header_name='stdint.h', define_name='HAVE_STDINT_H')
+
+def build(bld):
+    module = bld.create_ns3_module('myapps', ['core'])
+    module.source = [
+        'model/myapps.cc',
+        'model/datagenerator.cc',
+        'model/waterlevelmatrix.cc',
+        'model/devicestate.cc',
+        'model/wlmreceive.cc',
+        'model/wlmsend.cc',
+        'helper/myapps-helper.cc',
+        'helper/datagenerator-helper.cc'
+        ]
+
+    module_test = bld.create_ns3_module_test_library('myapps')
+    module_test.source = [
+        'test/myapps-test-suite.cc',
+        ]
+    # Tests encapsulating example programs should be listed here
+    if (bld.env['ENABLE_EXAMPLES']):
+        module_test.source.extend([
+        #    'test/myapps-examples-test-suite.cc',
+             ])
+
+    headers = bld(features='ns3header')
+    headers.module = 'myapps'
+    headers.source = [
+        'model/myapps.h',
+        'model/datagenerator.h',
+        'model/waterlevelmatrix.h',
+        'model/devicestate.h',
+        'model/wlmreceive.h',
+        'model/wlmsend.h',
+        'helper/myapps-helper.h',
+        'helper/datagenerator-helper.h'
+        ]
+
+    if bld.env.ENABLE_EXAMPLES:
+        bld.recurse('examples')
+
+    # bld.ns3_python_bindings()
+

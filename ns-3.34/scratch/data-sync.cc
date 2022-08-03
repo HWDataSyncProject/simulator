@@ -12,8 +12,13 @@
 #include "ns3/hyperterminal.h"
 
 #include <iostream>
+#include <string>
+#include <unistd.h>
+#include <filesystem>
+
 
 using namespace ns3;
+using namespace std;
 
 NS_LOG_COMPONENT_DEFINE ("Main");
 
@@ -21,7 +26,10 @@ int main (int argc, char *argv[])
 {
   CommandLine cmd;
   int test;
+  // std::string data_src_path;
   cmd.AddValue("test", "the test command", test);
+  // cmd.AddValue("data_src_path", 'the data source path for DataGenerator', data_src_path);
+
   cmd.Parse (argc, argv);
 
   
@@ -35,7 +43,14 @@ int main (int argc, char *argv[])
   LogComponentEnable ("DataGene2", LOG_LEVEL_INFO);
   LogComponentEnable ("Main", LOG_LEVEL_INFO);
 
-  NS_LOG_INFO ("Count of original solution: "<< test);
+
+  std::string current_path;
+  current_path = getcwd(NULL, 0);
+  std::string data_src_path = "/data-source/";
+  NS_LOG_INFO ("Current_path: "<< current_path + data_src_path);
+
+
+  
 
 
   NS_LOG_INFO ("Creating Nodes.");
