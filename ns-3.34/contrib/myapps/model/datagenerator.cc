@@ -11,7 +11,7 @@
 #include "math.h"
 #include <exception> 
 #include <unistd.h>
-#include<random>
+#include <random>
 
 using namespace std;
 
@@ -128,39 +128,48 @@ void DataGenerator::StartApplication (void)
     NS_LOG_FUNCTION (this);
     // m_sendEvent = Simulator::Schedule (Seconds (period), &DataGenerator::Gene, this);
     
-    m_sendEvent = Simulator::Schedule (Seconds (period/2), &DataGenerator::GeneratePoissonData, this); 
+    m_sendEvent = Simulator::Schedule (Seconds (period), &DataGenerator::GeneratePoissonData, this); 
     // NS_LOG_INFO("DataGenerator "<<node_idx<<":"<<app_index<<":"<<data_type_index<<" Start");
 }
 
 void DataGenerator::StopApplication (void)
 {
-  NS_LOG_FUNCTION (this);
-  Simulator::Cancel (m_sendEvent);
+    NS_LOG_FUNCTION (this);
+    Simulator::Cancel (m_sendEvent);
 }
 
 void DataGenerator::GeneratePoissonData()
 {
     if (devicestatemanager->GetIsAwake(node_idx))
     {
-        std::default_random_engine dre;
-        std::poisson_distribution<uint32_t> p_distribution(5.0);
-        std::uniform_int_distribution<int> u_distribution(0, 9);
+    
+        Ptr<UniformRandomVariable> random_state_value = CreateObject<UniformRandomVariable> ();
+        
+        random_state_value->SetAttribute ("Max", DoubleValue(10));
 
-        int p_generate_data = u_distribution(dre);
-
-        if (p_generate_data < 5)
+        if (random_state_value->GetInteger() < 5)
         {
-            bytes = p_distribution(dre);
+            bytes = random_state_value->GetInteger();
 
             if (bytes > 0)
             {
                 int64_t ts_temp = (Simulator::Now()).GetMilliSeconds();
                 
                 wlm->UpdataWaterLevelMatrix(app_index, data_type_index, ts_temp);
+                wlm->SetIsModified(true);
                 // TransTxt(bytes);
-                // NS_LOG_INFO("Device "<< node_idx << ":" << app_index << ":" << data_type_index << " generate new data");    
+
+                // NS_LOG_INFO("Generate " << bytes << " bytes.");
             }
+    
         }
+        else
+        {
+            // NS_LOG_INFO("No new data....");
+        }
+        
+        // NS_LOG_INFO("Device "<< node_idx << ":" << app_index << ":" << data_type_index << " generate new data");    
+            
     }
     m_sendEvent = Simulator::Schedule (Seconds (period), &DataGenerator::GeneratePoissonData, this); 
 

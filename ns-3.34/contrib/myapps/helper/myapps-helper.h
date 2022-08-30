@@ -36,6 +36,9 @@ class AppHelper
         ApplicationContainer InstallApps(uint32_t node_idx_, map<uint32_t, vector<uint32_t>> dtype_idxs, float period_, WaterLevelMatrix* wlm_, DeviceStateManager* dsm);
         void BindNode(Ptr<Node> node);
 
+        // void InitCommunicationApp();
+        // void AddCommunicationApp();
+
     private:
         
         ObjectFactory send_factory;

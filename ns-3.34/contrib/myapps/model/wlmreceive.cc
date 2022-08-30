@@ -112,6 +112,61 @@ void WaterLevelReceive::StopApplication(void)
 
 }
 
+void WaterLevelReceive::Receive(Ptr<Socket> socket)
+{
+    NS_LOG_FUNCTION (this << socket);
+    Ptr<Packet> packet;
+    Address from;
+
+    // NS_LOG_INFO("Receive running");
+   
+    while((packet = socket -> RecvFrom(from)))
+    {
+        
+        if (packet -> GetSize() > 0)
+        {
+
+            SeqTsHeader seqTs;
+            packet->RemoveHeader (seqTs);
+
+            // uint32_t currentSequenceNumber = seqTs.GetSeq ();
+            packet->RemoveAllPacketTags ();
+            packet->RemoveAllByteTags ();
+
+            
+            uint8_t buf[4 * wlm->GetNodeNumber() * wlm->GetAppNumber() * wlm->GetDateTypeNumber() + 5];
+            packet->CopyData(buf, sizeof(buf));
+
+            // TODO receive the data from the sender
+            
+            // check the header of the packet
+
+            /*
+            header: 
+                RQ
+            
+            */
+            if (buf[0] == 'R' && buf[1]=='Q')
+            {
+                ParsingWaterLevelMatrix(buf);
+                // NS_LOG_INFO("Receive running RQ");
+            }
+            else if (buf[0] == 'R' && buf[1]=='S')
+            {
+                /* parsing response */
+                ParsingResponse(buf);
+                // NS_LOG_INFO("Receive running RS");
+            }
+            
+
+        }
+
+
+    }
+    
+}
+
+
 void WaterLevelReceive::ParsingWaterLevelMatrix(uint8_t buf[])
 {
     // check the header again
@@ -187,7 +242,7 @@ void WaterLevelReceive::ParsingWaterLevelMatrix(uint8_t buf[])
         {
             Response(response_buf, sizeof(response_buf), source_node_idx);
             // NS_LOG_INFO("Response");
-            devicestatemanager->SetNodeAwake(node_idx);
+            devicestatemanager->SetDeviceAwake(node_idx);
             
         }
 
@@ -272,53 +327,7 @@ void WaterLevelReceive::Response(uint8_t response_buf[], size_t response_buf_siz
 }
 
 
-void WaterLevelReceive::Receive(Ptr<Socket> socket)
-{
-    NS_LOG_FUNCTION (this << socket);
-    Ptr<Packet> packet;
-    Address from;
 
-    // NS_LOG_INFO("Receive running");
-   
-    while((packet = socket -> RecvFrom(from)))
-    {
-        
-        if (packet -> GetSize() > 0)
-        {
-
-            SeqTsHeader seqTs;
-            packet->RemoveHeader (seqTs);
-
-            // uint32_t currentSequenceNumber = seqTs.GetSeq ();
-            packet->RemoveAllPacketTags ();
-            packet->RemoveAllByteTags ();
-
-            
-            uint8_t buf[4 * wlm->GetNodeNumber() * wlm->GetAppNumber() * wlm->GetDateTypeNumber() + 5];
-            packet->CopyData(buf, sizeof(buf));
-
-            // TODO receive the data from the sender
-            
-            // check the header of the packet
-            if (buf[0] == 'R' && buf[1]=='Q')
-            {
-                ParsingWaterLevelMatrix(buf);
-                // NS_LOG_INFO("Receive running RQ");
-            }
-            else if (buf[0] == 'R' && buf[1]=='S')
-            {
-                /* parsing response */
-                ParsingResponse(buf);
-                // NS_LOG_INFO("Receive running RS");
-            }
-            
-
-        }
-
-
-    }
-    
-}
 
 
 }

@@ -18,7 +18,12 @@ basic ns-3 (netanim and ns-3-dev) is to type:
 and cd into ns-3-dev for further work.  Consult the bake documentation
 on how to use bake to access optional ns-3 components.
 
-run test2
+### How to run
+
+Using the command:
+
+sudo ./waf --run "demo --node_num=5 --app_num=5 --dtype_num=5 --awake_num=2 --in_service_num=1"
+
+### How to update the code
 
 
-sudo ./waf --run "test2 --node_num=5 --app_num=5 --dtype_num=5 --awake_num=2 --in_service_num=1"

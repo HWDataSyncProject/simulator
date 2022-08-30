@@ -13,6 +13,8 @@
 
 
 #include "wlmsend.h"
+#include <iomanip>
+
 
 namespace ns3 {
 
@@ -88,6 +90,23 @@ void WaterLevelSend::StopApplication (void)
 
 }
 
+bool WaterLevelSend::isTimeToSend()
+{
+    bool istimetosend = false;
+    if (devicestatemanager->GetOnline(node_idx)) 
+    {
+        if (devicestatemanager->GetIsAwake(node_idx))
+        {
+            if (wlm->GetIsModified())
+            {
+                NS_LOG_INFO(wlm->GetNodeID() << " " << boolalpha << wlm->GetIsModified());
+                istimetosend = true;
+            }
+        }
+    }
+    return istimetosend;
+}
+
 void WaterLevelSend::Send()
 {
     NS_LOG_FUNCTION (this);
@@ -99,7 +118,7 @@ void WaterLevelSend::Send()
     // Only when the current device is in service, request to pull newest data from other device
     
     // current is online
-    if (devicestatemanager->GetOnline(node_idx) && devicestatemanager->GetIsInService(node_idx))
+    if (isTimeToSend())
     {
         // send the water level matrix to all online devices
         auto online_devices_id = devicestatemanager->GetCurrentOnlineDevicesID();
@@ -206,6 +225,7 @@ void WaterLevelSend::Send()
 
             }
         }
+        wlm->SetIsModified(false);
         
     }
     // else

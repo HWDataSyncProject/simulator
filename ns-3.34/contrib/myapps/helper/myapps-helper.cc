@@ -101,17 +101,17 @@ void AppHelper::Clear_all_Apps()
     app_container = temp;
 }
 
-ApplicationContainer AppHelper::InstallApps(uint32_t node_idx_, map<uint32_t, vector<uint32_t>> dtype_idxs, float period_, WaterLevelMatrix* wlm_, DeviceStateManager* dsm)
+ApplicationContainer AppHelper::InstallApps(uint32_t node_idx_, map<uint32_t, vector<uint32_t>> dtype_idxs, float period_, WaterLevelMatrix* wlm_, DeviceStateManager* dsm_)
 {
     node_idx = node_idx_;
    
     for(map<uint32_t, vector<uint32_t>>::iterator i = dtype_idxs.begin(); i != dtype_idxs.end(); i++)
     {
         uint32_t app_idx_ = i -> first;
-        vector<uint32_t> dtype_idxs = i->second;
+        vector<uint32_t> dtype_idx = i->second;
 
         DataGeneratorHelper d;
-        ApplicationContainer container = d.Install(node_idx_, app_idx_, dtype_idxs, period_, wlm_, dsm);
+        ApplicationContainer container = d.Install(node_idx_, app_idx_, dtype_idx, period_, wlm_, dsm_);
         // NS_LOG_INFO("App "<< app_idx_ << "Installed");
         app_container.Add(container);
     }
@@ -120,12 +120,11 @@ ApplicationContainer AppHelper::InstallApps(uint32_t node_idx_, map<uint32_t, ve
     // NS_LOG_INFO("node ");
 
     waterlevelmsendapp->SetWaterLevelMatrix(wlm_);
-    waterlevelreceiveapp->SetWaterLevelMatrix(wlm_);
-
-    waterlevelmsendapp->SetDeviceStateManager(dsm);
-    waterlevelreceiveapp->SetDeviceStateManager(dsm);
-
+    waterlevelmsendapp->SetDeviceStateManager(dsm_);
     waterlevelmsendapp->SetPeriod(period_);
+    
+    waterlevelreceiveapp->SetWaterLevelMatrix(wlm_);
+    waterlevelreceiveapp->SetDeviceStateManager(dsm_);
     waterlevelreceiveapp->SetPeriod(period_);   
 
     return app_container; 
@@ -145,6 +144,18 @@ void AppHelper::BindNode(Ptr<Node> node)
     // NS_LOG_INFO("APP LOAD SUCCESSFULLY");
 
 }
+
+// void AppHelper::InitCommunicationApp()
+// {
+//     //TODO
+// }
+
+
+// void AppHelper::AddCommunicationApp()
+// {
+//     //TODO
+// }
+
 
 
 }

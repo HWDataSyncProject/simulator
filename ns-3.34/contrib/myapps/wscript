@@ -15,8 +15,11 @@ def build(bld):
         'model/devicestate.cc',
         'model/wlmreceive.cc',
         'model/wlmsend.cc',
+        'model/wlmcommunication.cc',
         'helper/myapps-helper.cc',
-        'helper/datagenerator-helper.cc'
+        'helper/datagenerator-helper.cc',
+        'helper/device-helper.cc',
+        'helper/networkmanager.cc'
         ]
 
     module_test = bld.create_ns3_module_test_library('myapps')
@@ -38,8 +41,11 @@ def build(bld):
         'model/devicestate.h',
         'model/wlmreceive.h',
         'model/wlmsend.h',
+        'model/wlmcommunication.h',
         'helper/myapps-helper.h',
-        'helper/datagenerator-helper.h'
+        'helper/datagenerator-helper.h',
+        'helper/device-helper.h',
+        'helper/networkmanager.h'
         ]
 
     if bld.env.ENABLE_EXAMPLES:

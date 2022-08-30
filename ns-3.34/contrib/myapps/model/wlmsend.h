@@ -27,6 +27,8 @@ class WaterLevelSend: public Application
         WaterLevelSend();
         virtual ~WaterLevelSend();
 
+        bool isTimeToSend();
+
         void Send();
 
         void SetWaterLevelMatrix(WaterLevelMatrix* wlm_);
